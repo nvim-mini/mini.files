@@ -2516,6 +2516,12 @@ H.window_set_view = function(win_id, view)
   local culopt = vim.wo[win_id].cursorlineopt
   if culopt:find('line') == nil then vim.wo[win_id].cursorlineopt = culopt .. ',line' end
 
+  -- Respect global 'list' option, as it is disabled in floating windows
+  -- TODO: Use vim.wo[win_id][0] after compatibility with Neovim=0.9 is dropped
+  local opts_scope = { scope = 'local', win = win_id }
+  vim.api.nvim_set_option_value('list', vim.go.list, opts_scope)
+  vim.api.nvim_set_option_value('listchars', vim.go.listchars, opts_scope)
+
   -- Update border highlight based on buffer status
   H.window_update_border_hl(win_id)
 end
